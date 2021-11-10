@@ -1,0 +1,128 @@
+package assignment1;
+import java.sql.*; 
+import java.util.Scanner;
+public class student {
+
+ public static void main(String[] args) throws SQLException  { 
+  try {
+   // Connect to database
+   Connection conn = null;
+   PreparedStatement s=null;
+         ResultSet rs = null;
+  
+   conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/assignment1?useUnicode=true&characterEncoding=utf8&serverTimezone=GMT%2B8&useSSL=false",
+	        "root","123");
+   
+   
+   System.out.println("You are now connected to the database!");
+   System.out.println("Add data to the database--1;  Search id from database--2");
+   Scanner scanner = new Scanner(System.in);
+   System.out.print("Enter your choice:");
+   String a = scanner.nextLine();
+   
+  
+   if(a.equals ("1") ) {
+   System.out.println("Insert the data to the table student's properties");
+   
+   
+   // Create a statement to retrieve objects
+   //insert data to the table
+   //need user input the data one by one
+   
+   System.out.print("Enter student's id: ");
+   String id = scanner.nextLine();
+
+   System.out.print("Enter student's name: ");
+   String name = scanner.nextLine();
+   
+   System.out.print("Enter student's math mark: ");
+   String math_mark = scanner.nextLine();
+   
+   System.out.print("Enter student's science mark: ");
+   String science_mark = scanner.nextLine();
+   
+   // Create a statement to retrieve objects
+        //create the statement of database 
+   String sql="INSERT INTO student"+"(id ,name ,math_mark ,science_mark )"+"VALUES(?,?,?,?)";
+   s = conn.prepareStatement(sql);
+   s.setString(1, id);
+   s.setString(2, name);
+   s.setString(3, math_mark);
+   s.setString(4, science_mark);
+   s.executeUpdate();
+   
+   
+   
+      // Retrieve results from the table
+   
+      rs = s.executeQuery ("Select * from student"); 
+      // Print columns headers
+      ResultSetMetaData rsmd =rs.getMetaData(); 
+      int i =rsmd.getColumnCount( );
+      
+      for(int j=1; j<=i; j++) { 
+       System.out.print(rsmd.getColumnName(j)+"\t"+"\t"); 
+       System.out.print(""); 
+      } 
+      System.out.print("\n");
+      // Print records
+      while(rs.next( ) ) { 
+       for(int j=1; j<=i; j++) 
+       { 
+        System.out.print (rs.getString( j)+"\t"+"\t"+"\t"); 
+        System.out.print(""); 
+       }
+       System.out.print("\n");
+      }
+     
+      
+   
+   
+   }
+   else if(a.equals("2")) {
+    System.out.println("search the student id to the table student's properties");
+    System.out.print("Enter student's id: ");
+    String id = scanner.nextLine();
+    
+    String sql = "select * from student where id like ?";
+    s = conn.prepareStatement(sql);
+    s.setString(1, id);
+     rs = s.executeQuery();
+     
+     
+        System.out.println("---------------------------------------------------------------------");
+		System.out.println(" ");
+		System.out.println("ID" + "\t\t" + "Name" + "\t\t" + "Math mark" + "\t\t" + "Science mark");
+		System.out.println("---------------------------------------------------------------------");
+               // Condition check using next() method
+               // Holds true till there is single element remaining
+               // in the object
+               if (rs.next()) {
+                  
+                   int id1 = rs.getInt("id");
+                   String name = rs.getString("name");
+                   String math_mark = rs.getString("math_mark");
+                   String  science_mark = rs.getString("science_mark");
+                   
+                   
+                 
+                   System.out.println(id + "\t\t" + name + "\t\t" + math_mark + "\t\t\t" + science_mark);
+       		}
+    
+   }
+   
+   
+   
+   }
+  catch (Exception e) {
+   e.printStackTrace();
+  }
+  
+
+  
+  
+ 
+ }
+  
+  
+}
